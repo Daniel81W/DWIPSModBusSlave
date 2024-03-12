@@ -1,0 +1,12 @@
+{
+    "id": "{04AF8BD1-74F8-6628-EA6D-1102D13A8FB1}",
+    "name": "DWIPSModBusSlave",
+    "author": "Daniel Weber",
+    "url": "https://github.com/Daniel81W/DWIPSModBusSlave.git",
+    "compatibility": {
+        "version": "6.4"
+    },
+    "version": "0.1",
+    "build": 1,
+    "date": 1710267804
+}

@@ -1,0 +1,16 @@
+{
+    "id": "{AA9C49D4-3623-6B3E-2586-B57605F79D4B}",
+    "name": "DWIPSModBusSlave",
+    "type": 3,
+    "vendor": "DWIPS",
+    "aliases": [],
+    "parentRequirements": [
+        "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+    ],
+    "prefix": "DWIPSMBS",
+    "url": "https://github.com/Daniel81W/DWIPSModBusSlave"
+}
