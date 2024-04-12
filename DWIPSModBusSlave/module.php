@@ -10,8 +10,6 @@
 			//Never delete this line!
 			parent::Create();
 
-
-
 		}
 
 		/**
