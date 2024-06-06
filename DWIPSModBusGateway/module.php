@@ -70,14 +70,20 @@
             $this->SendDebug("Data", $data[0], 0);
             switch ($data["DataID"]) {
                 case "{9082C662-7864-D5CA-863F-53999200D897}":
-                    $this->SendDebug("Test", "Test Test", 0);
-                    $this->SendDebug("Data", print_r($data, true), 0);
-                    $this->SendDebug("Data", $data['Buffer'], 0);
+                    $this->ReceiveDataUDP($data);
                     break;
                 default:
                     break;
             }
 		}
+
+        private function ReceiveDataUDP($udpdata)
+        {
+            $clientIP = $udpdata['ClientIP'];
+            $this->SendDebug("Data", $clientIP, 0);
+            //$this->SendDebug("Data", print_r($data, true), 0);
+            //$this->SendDebug("Data", $data['Buffer'], 0);
+        }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
