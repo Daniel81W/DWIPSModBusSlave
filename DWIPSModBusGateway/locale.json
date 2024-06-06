@@ -5,7 +5,8 @@
             "ModBus RTU over TCP": "ModBus RTU über TCP",
             "ModBus RTU over UDP": "ModBus RTU über UDP",
             "ModBus ASCII over TCP": "ModBus ASCII über TCP",
-            "ModBus ASCII over UDP": "ModBus ASCII über UDP"
+            "ModBus ASCII over UDP": "ModBus ASCII über UDP",
+            "device ID": "Geräte-ID"
         }
     }
 }

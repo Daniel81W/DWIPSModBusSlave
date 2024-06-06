@@ -38,6 +38,14 @@
                     "value": 7
                 }
             ]
+        },
+        {
+            "type": "NumberSpinner",
+            "name": "DeviceID",
+            "caption": "device ID",
+            "minimum": 1,
+            "maximum": 247,
+            "value": 1
         }
     ],
     "actions": [],
