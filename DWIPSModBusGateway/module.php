@@ -84,9 +84,9 @@
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
             $d = [
-                'TransID' => substr($buffer, 0, 2),
-                'ProtoID' => substr($buffer, 2, 2),
-                'Length' => intval(substr($buffer, 4, 2))
+                'TransID' => substr($buffer, 0, 4),
+                'ProtoID' => substr($buffer, 4, 4),
+                'Length' => intval(substr($buffer, 8, 4))
             ];
             $this->SendDebug("TransID", $d['TransID'], 0);
         }
