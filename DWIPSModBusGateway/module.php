@@ -13,7 +13,7 @@
             $this->RegisterPropertyInteger("ModbusType", ModBusType::ModBus_TCP);
             $this->RegisterPropertyInteger("DeviceID", 1);
 
-            $this->RegisterAttributeString("TransIDsIP", "");
+            $this->RegisterAttributeString("TransIDsIP", json_encode(array()));
             $this->RegisterAttributeInteger("InternalTransIDCounter", 1);
 		}
 
