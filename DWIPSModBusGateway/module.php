@@ -10,6 +10,8 @@
 			//Never delete this line!
 			parent::Create();
 
+            $this->RegisterPropertyInteger("ModbusType", 0);
+            $this->RegisterPropertyInteger("DeviceID", 1);
 		}
 
 		/**
