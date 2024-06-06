@@ -135,6 +135,7 @@
                     'Buffer' => $body
                 ];
                 $d2sStr = json_encode($data2send);
+                $this->SendDebug('Test', $d2sStr, 0);
                 $this->SendDataToChildren($d2sStr);
             }
         }
