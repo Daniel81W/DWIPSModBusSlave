@@ -85,7 +85,7 @@
             $this->SendDebug("Data", $clientPort, 0);
             $broadcast = boolval($udpdata['Broadcast']);
             $this->SendDebug("Data", $broadcast, 0);
-            $buffer = $udpdata['Buffer'];
+            $buffer = utf8_decode($udpdata['Buffer']);
             $this->SendDebug("Data", $buffer, 0);
             //$this->SendDebug("Data", print_r($data, true), 0);
             //$this->SendDebug("Data", $data['Buffer'], 0);
