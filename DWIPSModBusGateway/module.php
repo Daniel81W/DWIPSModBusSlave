@@ -173,7 +173,7 @@
         {
             $intTransIDs = json_decode($this->ReadAttributeString("TransIDsIP"), true);
             $this->SendDebug("", print_r($intTransIDs, true), 0);
-            $intTransID = array_search(['IP' => $ip, 'Port' => $port, 'TransID' => $transid], $intTransIDs, true);
+            $intTransID = false;//array_search(['IP' => $ip, 'Port' => $port, 'TransID' => $transid], $intTransIDs, true);
             $this->SendDebug("", print_r($intTransID, true), 0);
             if (!$intTransID) {
                 $intTransID = $this->getNextIntTransID();
