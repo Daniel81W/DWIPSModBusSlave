@@ -9,7 +9,7 @@
     ],
     "childRequirements": [],
     "implemented": [
-        "{018EF6B5-AB94-40C6-AA53-46943E824ACF},{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+        "{018EF6B5-AB94-40C6-AA53-46943E824ACF}","{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
     ],
     "prefix": "DWIPSMBGW",
     "url": "https://github.com/Daniel81W/DWIPSModBusSlave"
