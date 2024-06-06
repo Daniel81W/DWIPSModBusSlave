@@ -89,6 +89,7 @@
                 'Length' => hexdec(intval(substr($buffer, 8, 4)))
             ];
             $this->SendDebug("TransID", $d['TransID'], 0);
+            $this->SendDebug("TransID", $d['Length'], 0);
         }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
