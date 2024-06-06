@@ -112,17 +112,28 @@
             $buffer = bin2hex($udpdata['Buffer']);
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
-            $frame = [
+            $header = [
                 'TransID' => hexdec(substr($buffer, 0, 4)),
                 'ProtoID' => hexdec(substr($buffer, 4, 4)),
                 'Length' => hexdec(intval(substr($buffer, 8, 4))),
-                'DevID' => hexdec(substr($buffer, 12, 2)),
+                'DevID' => hexdec(substr($buffer, 12, 2))
+            ];
+            $body = [
                 'FC' => hexdec(substr($buffer, 14, 2)),
                 'Reg' => hexdec(substr($buffer, 16, 4)),
                 'Data' => substr($buffer, 20, hexdec(intval(substr($buffer, 8, 4))) * 2 - 8)
             ];
-            $this->SendDebug("Data", $frame['Data'], 0);
-            //if($meta['ProtoID'] == 0 && )
+
+            if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
+
+                $data2send = [
+                    'DataID' => '',
+                    'Buffer' => $body
+                ];
+                $d2sStr = json_encode($data2send, JSON_PRETTY_PRINT);
+                $this->SendDebug("json", $d2sStr, 0);
+                $this->SendDataToChildren($d2sStr);
+            }
         }
 
         private function ReceiveDataRTU($rtudata)
