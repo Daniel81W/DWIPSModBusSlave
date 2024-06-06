@@ -1,7 +1,9 @@
 {
     "translations": {
         "de": {
-            "ModBus TCP over UDP": "ModBus TCP über UDP"
+            "ModBus TCP over UDP": "ModBus TCP über UDP",
+            "ModBus RTU over TCP": "ModBus RTU über TCP",
+            "ModBus RTU over UDP": "ModBus RTU über UDP"
         }
     }
 }
