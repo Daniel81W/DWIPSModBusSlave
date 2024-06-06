@@ -24,6 +24,18 @@
                 {
                     "caption": "ModBus RTU over UDP",
                     "value": 4
+                },
+                {
+                    "caption": "ModBus ASCII",
+                    "value": 5
+                },
+                {
+                    "caption": "ModBus ASCII over TCP",
+                    "value": 6
+                },
+                {
+                    "caption": "ModBus ASCII over UDP",
+                    "value": 7
                 }
             ]
         }
