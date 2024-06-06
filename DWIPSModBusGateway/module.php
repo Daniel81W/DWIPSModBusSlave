@@ -82,8 +82,13 @@
             $broadcast = boolval($udpdata['Broadcast']);
             $buffer = bin2hex($udpdata['Buffer']);
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
-            //$this->SendDebug("Data", print_r($data, true), 0);
-            //$this->SendDebug("Data", $data['Buffer'], 0);
+
+            $d = [
+                'TransID' => intval(substr($buffer, 0, 2)),
+                'ProtoID' => substr($buffer, 2, 2),
+                'Length' => intval(substr($buffer, 4, 2))
+            ];
+            $this->SendDebug("Length", $d['TransID'], 0);
         }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
