@@ -65,7 +65,7 @@
 		public function ReceiveData($JSONString) {
             $this->SendDebug("in", $JSONString, 0);
 
-            $data = json_decode($JSONString);
+            $data = json_decode($JSONString, true);
 
             $this->SendDebug("Data", $data[0], 0);
             switch ($data["DataID"]) {
