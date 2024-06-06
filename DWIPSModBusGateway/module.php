@@ -69,6 +69,7 @@
 
             switch ($data["DataID"]) {
                 case "{9082C662-7864-D5CA-863F-53999200D897}":
+                    $this->SendDebug("Test", "Test Test", 0);
                     $this->SendDebug("Data", $data["Buffer"], 0);
                     break;
                 default:
