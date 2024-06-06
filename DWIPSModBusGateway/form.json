@@ -1,5 +1,33 @@
 {
-    "elements": [],
+    "elements": [
+        {
+            "type": "Select",
+            "name": "DeviceType",
+            "caption": "Einheit",
+            "options": [
+                {
+                    "caption": "ModBus TCP",
+                    "value": 0
+                },
+                {
+                    "caption": "ModBus TCP over UDP",
+                    "value": 1
+                },
+                {
+                    "caption": "ModBus RTU",
+                    "value": 2
+                },
+                {
+                    "caption": "ModBus RTU over TCP",
+                    "value": 3
+                },
+                {
+                    "caption": "ModBus RTU over UDP",
+                    "value": 4
+                }
+            ]
+        }
+    ],
     "actions": [],
     "status": []
 }
