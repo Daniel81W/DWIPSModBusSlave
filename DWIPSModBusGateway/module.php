@@ -67,6 +67,7 @@
 
             $data = json_decode($JSONString);
 
+            $this->SendDebug("Data", print_r($data, true), 0);
             switch ($data["DataID"]) {
                 case "{9082C662-7864-D5CA-863F-53999200D897}":
                     $this->SendDebug("Test", "Test Test", 0);
