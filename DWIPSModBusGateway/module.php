@@ -63,7 +63,8 @@
         */
 
 		public function ReceiveData($JSONString) {
-			$this->SendDebug("in", json_decode($JSONString),0);
+            $this->SendDebug("Test", "Das ist ein Test", 0);
+            //$this->SendDebug("in", json_decode($JSONString),0);
 		}
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
