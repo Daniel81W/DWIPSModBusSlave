@@ -66,30 +66,87 @@
 
             $data = json_decode($JSONString, true);
 
-            switch ($data["DataID"]) {
-                case "{9082C662-7864-D5CA-863F-53999200D897}":
+            switch ($this->ReadPropertyInteger("ModbusType")) {
+                case ModBusType::ModBus_TCP:
+                    $this->ReceiveDataTCP($data);
+                    break;
+                case ModBusType::ModBus_UDP:
                     $this->ReceiveDataUDP($data);
+                    break;
+                case ModBusType::ModBus_RTU:
+                    $this->ReceiveDataRTU($data);
+                    break;
+                case ModBusType::ModBus_RTU_TCP:
+                    $this->ReceiveDataRTUTCP($data);
+                    break;
+                case ModBusType::ModBus_RTU_UDP:
+                    $this->ReceiveDataRTUUDP($data);
+                    break;
+                case ModBusType::ModBus_ASCII:
+                    $this->ReceiveDataASCII($data);
+                    break;
+                case ModBusType::ModBus_ASCII_TCP:
+                    $this->ReceiveDataASCIITCP($data);
+                    break;
+                case ModBusType::ModBus_ASCII_UDP:
+                    $this->ReceiveDataASCIIUDP($data);
                     break;
                 default:
                     break;
             }
+
 		}
+
+        private function ReceiveDataTCP($tcpdata)
+        {
+        }
 
         private function ReceiveDataUDP($udpdata)
         {
+            if ($udpdata["DataID"] != "{9082C662-7864-D5CA-863F-53999200D897}") {
+                return;
+            }
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
             $broadcast = boolval($udpdata['Broadcast']);
             $buffer = bin2hex($udpdata['Buffer']);
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
-            $d = [
+            $frame = [
                 'TransID' => hexdec(substr($buffer, 0, 4)),
-                'ProtoID' => substr($buffer, 4, 4),
-                'Length' => hexdec(intval(substr($buffer, 8, 4)))
+                'ProtoID' => hexdec(substr($buffer, 4, 4)),
+                'Length' => hexdec(intval(substr($buffer, 8, 4))),
+                'DevID' => hexdec(substr($buffer, 12, 2)),
+                'FC' => hexdec(substr($buffer, 14, 2)),
+                'Reg' => hexdec(substr($buffer, 16, 4)),
+                'Data' => substr($buffer, 20, hexdec(intval(substr($buffer, 8, 4))) * 2 - 8)
             ];
-            $this->SendDebug("TransID", $d['TransID'], 0);
-            $this->SendDebug("TransID", $d['Length'], 0);
+            $this->SendDebug("Data", $frame['Data'], 0);
+            //if($meta['ProtoID'] == 0 && )
+        }
+
+        private function ReceiveDataRTU($rtudata)
+        {
+        }
+
+        private function ReceiveDataRTUTCP($rtudata)
+        {
+        }
+
+        private function ReceiveDataRTUUDP($rtudata)
+        {
+        }
+
+        private function ReceiveDataASCII($asciidata)
+        {
+        }
+
+        private function ReceiveDataASCIITCP($asciidata)
+        {
+        }
+
+        private function ReceiveDataASCIIUDP($asciidata)
+        {
         }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
