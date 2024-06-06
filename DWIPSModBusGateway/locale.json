@@ -1,6 +1,7 @@
 {
     "translations": {
         "de": {
+            "ModBus TCP over UDP": "ModBus TCP über UDP"
         }
     }
 }

@@ -2,8 +2,8 @@
     "elements": [
         {
             "type": "Select",
-            "name": "DeviceType",
-            "caption": "Einheit",
+            "name": "ModbusType",
+            "caption": "Modbus",
             "options": [
                 {
                     "caption": "ModBus TCP",
