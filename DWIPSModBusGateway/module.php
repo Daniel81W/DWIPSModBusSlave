@@ -67,7 +67,6 @@
 
             $data = json_decode($JSONString, true);
 
-            $this->SendDebug("Data", $data[0], 0);
             switch ($data["DataID"]) {
                 case "{9082C662-7864-D5CA-863F-53999200D897}":
                     $this->ReceiveDataUDP($data);
@@ -82,7 +81,7 @@
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
             $broadcast = boolval($udpdata['Broadcast']);
-            $buffer = json_decode($udpdata['Buffer']);
+            $buffer = ($udpdata['Buffer']);
             $this->SendDebug("Buffer", $buffer, 0);
             //$this->SendDebug("Data", print_r($data, true), 0);
             //$this->SendDebug("Data", $data['Buffer'], 0);
