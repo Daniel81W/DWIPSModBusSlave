@@ -12,6 +12,9 @@
 
             $this->RegisterPropertyInteger("ModbusType", ModBusType::ModBus_TCP);
             $this->RegisterPropertyInteger("DeviceID", 1);
+
+            $this->RegisterAttributeString("TransIDsIP", "");
+            $this->RegisterAttributeInteger("InternalTransIDCounter", 1);
 		}
 
 		/**
@@ -121,17 +124,17 @@
             $body = [
                 'FC' => hexdec(substr($buffer, 14, 2)),
                 'Reg' => hexdec(substr($buffer, 16, 4)),
-                'Data' => substr($buffer, 20, hexdec(intval(substr($buffer, 8, 4))) * 2 - 8)
+                'Data' => substr($buffer, 20, $header['Length'] * 2 - 8)
             ];
 
             if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
-
+                $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
+                $body['IntTransID'] = $intTransID;
                 $data2send = [
                     'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
                     'Buffer' => $body
                 ];
-                $d2sStr = json_encode($data2send, JSON_PRETTY_PRINT);
-                $this->SendDebug("json", $d2sStr, 0);
+                $d2sStr = json_encode($data2send);
                 $this->SendDataToChildren($d2sStr);
             }
         }
@@ -164,7 +167,25 @@
 
 
 		}
-		
+
+        private function CheckForTransIDIP($ip, $port, $transid)
+        {
+            $intTransIDs = json_decode($this->ReadAttributeString("TransIDsIP"), true);
+            $intTransID = array_search(['IP' => $ip, 'Port' => $port, 'TransID' => $transid], $intTransIDs, true);
+            if (!$intTransID) {
+                $intTransID = $this->getNextIntTransID();
+                $intTransIDs[$intTransID] = ['IP' => $ip, 'Port' => $port, 'TransID' => $transid];
+
+            }
+            return $intTransID;
+        }
+
+        private function getNextIntTransID(): int
+        {
+            $next = $this->ReadAttributeInteger("InternalTransIDCounter") + 1;
+            $this->WriteAttributeInteger("InternalTransIDCounter", $next);
+            return $next;
+        }
     }
 
 class ModBusType
