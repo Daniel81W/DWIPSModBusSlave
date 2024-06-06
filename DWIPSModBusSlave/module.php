@@ -9,6 +9,7 @@
 		{
 			//Never delete this line!
 			parent::Create();
+            $this->ForceParent("{8ADEF4EE-6E27-6035-46C6-32221029A20D}");
 
 		}
 

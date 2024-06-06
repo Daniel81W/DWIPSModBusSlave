@@ -127,7 +127,7 @@
             if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
 
                 $data2send = [
-                    'DataID' => '',
+                    'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
                     'Buffer' => $body
                 ];
                 $d2sStr = json_encode($data2send, JSON_PRETTY_PRINT);
