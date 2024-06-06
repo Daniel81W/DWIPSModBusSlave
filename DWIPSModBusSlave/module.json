@@ -5,11 +5,11 @@
     "vendor": "DWIPS",
     "aliases": [],
     "parentRequirements": [
-        "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}"
+        "{A590DFA2-E37C-CEA6-12C5-457C47323E4C}"
     ],
     "childRequirements": [],
     "implemented": [
-        "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}"
+        "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}"
     ],
     "prefix": "DWIPSMBS",
     "url": "https://github.com/Daniel81W/DWIPSModBusSlave"
