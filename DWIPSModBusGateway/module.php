@@ -84,11 +84,11 @@
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
             $d = [
-                'TransID' => intval(substr($buffer, 0, 2)),
+                'TransID' => substr($buffer, 0, 2),
                 'ProtoID' => substr($buffer, 2, 2),
                 'Length' => intval(substr($buffer, 4, 2))
             ];
-            $this->SendDebug("Length", $d['TransID'], 0);
+            $this->SendDebug("TransID", $d['TransID'], 0);
         }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
