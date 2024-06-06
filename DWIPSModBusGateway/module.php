@@ -63,7 +63,6 @@
         */
 
 		public function ReceiveData($JSONString) {
-            $this->SendDebug("in", $JSONString, 0);
 
             $data = json_decode($JSONString, true);
 
@@ -82,7 +81,7 @@
             $clientPort = $udpdata['ClientPort'];
             $broadcast = boolval($udpdata['Broadcast']);
             $buffer = bin2hex($udpdata['Buffer']);
-            $this->SendDebug("Received[" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
+            $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
             //$this->SendDebug("Data", print_r($data, true), 0);
             //$this->SendDebug("Data", $data['Buffer'], 0);
         }
