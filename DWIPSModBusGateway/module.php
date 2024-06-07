@@ -279,7 +279,7 @@
 
 		}
 
-        private function CheckForTransIDIP(string $ip, string $port, int $transid)
+        private function CheckForTransIDIP(string $ip, int $port, int $transid)
         {
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
             if ($intTransIDs_str == "") {
