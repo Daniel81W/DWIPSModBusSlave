@@ -177,8 +177,8 @@
             }
             $this->SendDebug("2", print_r($intTransIDs, true), 0);
             $trans = $intTransIDs[$fdata['IntTransID']];
-            $this->SendDebug("3", $trans, 0);
-            $d2s = [
+            $this->SendDebug("3", print_r($trans, true), 0);
+            $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
                 'Buffer' => '',
                 'ClientIP' => $trans['IP'],
@@ -186,7 +186,7 @@
                 'Broadcast' => false
             ];
             $this->SendDebug('4', dechex($fdata['FC']), 0);
-            //$this->SendDataToParent(json_encode());
+            //$this->SendDataToParent(json_encode($data2send));
         }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
