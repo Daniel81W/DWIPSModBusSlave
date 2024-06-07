@@ -2,6 +2,14 @@
     /** @noinspection PhpExpressionResultUnusedInspection */
     /** @noinspection PhpUnused */
     /** @noinspection PhpRedundantClosingTagInspection */
+include_once(__DIR__ . "/../libs/ModBus_Type.php");
+include_once(__DIR__ . "/../libs/IO_Datatype.php");
+include_once(__DIR__ . "/../libs/Module_GUID.php");
+
+
+use DWIPS\ModBus\libs\ModBus_Type;
+use DWIPS\libs\IO_Datatype;
+use DWIPS\libs\Module_GUID;
 
     class DWIPSModBusSlave extends IPSModule {
 
@@ -9,7 +17,7 @@
 		{
 			//Never delete this line!
 			parent::Create();
-            $this->ForceParent("{8ADEF4EE-6E27-6035-46C6-32221029A20D}");
+            $this->ForceParent(Module_GUID::DWIPS_ModBus_Gateway);
 
 		}
 
@@ -48,7 +56,7 @@
 
             $mbdata = json_decode($JSONString, true);
 
-            if ($mbdata["DataID"] != "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}") {
+            if ($mbdata["DataID"] != IO_Datatype::DWIPS_MODBUS_RX) {
                 return;
             }
             $intTransID = $mbdata['IntTransID'];
@@ -57,7 +65,7 @@
             $data = $mbdata['Buffer']['Data'];
 
             $retDat = [
-                "DataID" => '{A590DFA2-E37C-CEA6-12C5-457C47323E4C}',
+                "DataID" => IO_Datatype::DWIPS_MODBUS_TX,
                 'IntTransID' => $intTransID,
                 'Buffer' => ['DevID' => $devID, 'FC' => $fc, 'Data' => '02001a']
             ];
