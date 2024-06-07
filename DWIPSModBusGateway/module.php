@@ -153,6 +153,8 @@
                 //Daten JsonCodieren und an Device senden
                 $this->SendDataToChildren(json_encode($data2send));
             }
+
+            $this->CRCGenerator("1103006B0003");
         }
 
 
@@ -336,6 +338,25 @@
             $next = $this->ReadAttributeInteger("InternalTransIDCounter") + 1;
             $this->WriteAttributeInteger("InternalTransIDCounter", $next);
             return $next;
+        }
+
+        private function CRCGenerator(string $hexdata): string
+        {
+
+            $crc_reg = 0xffff;
+
+            for ($i = 0; $i < strlen($hexdata); $i += 2) {
+                $crc_reg = $crc_reg ^ hexdec(substr($hexdata, $i, 2));
+
+                for ($j = 0; $j < 8; $j++) {
+                    $crc_reg >> 1;
+                    if (($crc_reg ^ 1) == 1) {
+                        $crc_reg = $crc_reg ^ 0xA001;
+                    }
+                }
+            }
+            $this->SendDebug("CRC", dechex($crc_reg), 0);
+            return "";
         }
     }
 
