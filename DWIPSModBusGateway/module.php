@@ -84,7 +84,7 @@
                         $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
                         return;
                     }
-                    $this->ReceiveDataUDP($data);
+                    $this->ReceiveDataTCP($data, ModBusType::ModBus_UDP);
                     break;
                 case ModBusType::ModBus_RTU:
                     $this->ReceiveDataRTU($data);
