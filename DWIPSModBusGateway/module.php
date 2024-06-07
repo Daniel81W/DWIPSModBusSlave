@@ -106,39 +106,45 @@
 
         private function ReceiveDataUDP(array $udpdata)
         {
-            $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
             // Auf richtigen Datentyp prüfen, sonst abbrechen
             if ($udpdata["DataID"] != "{9082C662-7864-D5CA-863F-53999200D897}") {
                 $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
                 return;
             }
+            //UDP-spezifische Daten auslesen
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
             $broadcast = boolval($udpdata['Broadcast']);
+            //Buffer lesen und in hex wandeln
             $buffer = bin2hex($udpdata['Buffer']);
+            //Daten im Debug ausgeben
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
+            //Aus Buffer den ModBusHeader auslesen
             $header = [
-                'TransID' => hexdec(substr($buffer, 0, 4)),
-                'ProtoID' => hexdec(substr($buffer, 4, 4)),
-                'Length' => hexdec(intval(substr($buffer, 8, 4))),
-                'DevID' => hexdec(substr($buffer, 12, 2))
+                'TransID' => hexdec(substr($buffer, 0, 4)), //ModBus-TransaktionsID - ersten 2 Byte
+                'ProtoID' => hexdec(substr($buffer, 4, 4)), // ModBus-ProtokollID - Byte 3+4, immer 0x0000
+                'Length' => hexdec(intval(substr($buffer, 8, 4))), //Länger der folgenden Daten (DeviceID, Functionscode und Daten) - Byte 5+6
+                'DevID' => hexdec(substr($buffer, 12, 2)) //ID des abgefragten Gerätes - Byte 7
             ];
+            //Body des Modbusframes
             $body = [
-                'FC' => hexdec(substr($buffer, 14, 2)),
-                'Data' => substr($buffer, 16, $header['Length'] * 2 - 4)
+                'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
+                'Data' => substr($buffer, 16, $header['Length'] * 2 - 4) //Eigentliche Daten - Länge: Length - 2 Byte
             ];
 
+            //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
             if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
+                //Prüfen ob es vom Absender schon eine ANfrage mit gleicher TransaktionsID gibt.
                 $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
+                //Daten für ModbusDevice
                 $data2send = [
                     'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
                     'IntTransID' => $intTransID,
                     'Buffer' => $body
                 ];
-                $d2sStr = json_encode($data2send);
-                $this->SendDebug('Test', $d2sStr, 0);
-                $this->SendDataToChildren($d2sStr);
+                //Daten JsonCodieren und an Device senden
+                $this->SendDataToChildren(json_encode($data2send));
             }
         }
 
@@ -272,7 +278,7 @@
 
 		}
 
-        private function CheckForTransIDIP($ip, $port, $transid)
+        private function CheckForTransIDIP(string $ip, string $port, int $transid)
         {
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
             if ($intTransIDs_str == "") {
