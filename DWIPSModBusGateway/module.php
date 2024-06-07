@@ -207,7 +207,7 @@
 
         }
 
-        public function ForwardDataUDP($data)
+        public function ForwardDataUDP(array $data)
         {
 
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
