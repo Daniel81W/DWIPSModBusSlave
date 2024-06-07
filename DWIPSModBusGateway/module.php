@@ -237,9 +237,7 @@
                 'ClientPort' => $trans['Port'],
                 'Broadcast' => false
             ];
-            $this->SendDebug('3', $trans['TransID'], 0);
-            $this->SendDebug('4', dechex($trans['TransID']), 0);
-            $this->SendDebug('5', $buf, 0);
+            $this->SendDebug('5', json_encode($data2send), 0);
             $this->SendDataToParent(json_encode($data2send));
         }
 
