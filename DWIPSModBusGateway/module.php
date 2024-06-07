@@ -241,7 +241,7 @@
 
             $d2s = json_encode($data2send);
             $this->SendDebug("", $d2s, 0);
-            $this->SendDebug("", $this->SendDataToParent($d2s), 0);
+            $this->SendDebug("", $this->SendDataToParent(json_encode($data2send)), 0);
         }
 
         public function ForwardDataRTU(array $data)
