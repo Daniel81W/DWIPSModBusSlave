@@ -163,6 +163,10 @@
         {
         }
 
+        public function ForwardData($JSONString)
+        {
+            $this->SendDebug("Slave", print_r(json_decode($JSONString), true), 0);
+        }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
 

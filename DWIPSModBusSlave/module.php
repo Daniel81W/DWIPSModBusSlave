@@ -46,13 +46,28 @@
 		public function ReceiveData($JSONString) {
             $this->SendDebug("in", $JSONString, 0);
 
-            $data = json_decode($JSONString, true);
+            $mbdata = json_decode($JSONString, true);
 
-            if ($data["DataID"] != "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}") {
+            if ($mbdata["DataID"] != "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}") {
                 return;
             }
+            $intTransID = $mbdata['IntTransID'];
+            $fc = $mbdata['Buffer']['FC'];
+            $data = $mbdata['Buffer']['Data'];
 
-		}
+            $retDat = [
+                "DataID" => '{A590DFA2-E37C-CEA6-12C5-457C47323E4C}',
+                'IntTransID' => $intTransID,
+                ['FC' => $fc, 'Data' => '02001A']
+            ];
+            switch ($fc) {
+                case 3:
+                    $this->SendDataToParent(json_encode($retDat));
+                    break;
+                default:
+                    break;
+            }
+        }
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
