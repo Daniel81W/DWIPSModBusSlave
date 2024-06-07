@@ -123,15 +123,14 @@
             ];
             $body = [
                 'FC' => hexdec(substr($buffer, 14, 2)),
-                'Reg' => hexdec(substr($buffer, 16, 4)),
-                'Data' => substr($buffer, 20, $header['Length'] * 2 - 8)
+                'Data' => substr($buffer, 16, $header['Length'] * 2 - 4)
             ];
 
             if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
                 $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
-                $body['IntTransID'] = $intTransID;
                 $data2send = [
                     'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
+                    'IntTransID' => $intTransID,
                     'Buffer' => $body
                 ];
                 $d2sStr = json_encode($data2send);

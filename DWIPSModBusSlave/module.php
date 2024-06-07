@@ -45,6 +45,13 @@
 
 		public function ReceiveData($JSONString) {
             $this->SendDebug("in", $JSONString, 0);
+
+            $data = json_decode($JSONString, true);
+
+            if ($data["DataID"] != "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}") {
+                return;
+            }
+
 		}
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
