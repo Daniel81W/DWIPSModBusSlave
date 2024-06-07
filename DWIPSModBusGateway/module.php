@@ -104,7 +104,7 @@
         {
         }
 
-        private function ReceiveDataUDP($udpdata)
+        private function ReceiveDataUDP(array $udpdata)
         {
             $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
             // Auf richtigen Datentyp prüfen, sonst abbrechen
