@@ -240,6 +240,7 @@
             $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", $buf, 0);
 
             $d2s = json_encode($data2send);
+            $this->SendDebug("", $d2s, 0);
             $this->SendDebug("", $this->SendDataToParent($d2s), 0);
         }
 
