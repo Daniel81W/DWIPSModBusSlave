@@ -126,6 +126,7 @@
 
         private function ReceiveDataUDP(array $udpdata)
         {
+            $this->SendDebug("Deb", utf8_decode($udpdata['Buffer']), 0);
             //UDP-spezifische Daten auslesen
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
