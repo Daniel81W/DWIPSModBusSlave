@@ -176,7 +176,7 @@
             }
             $trans = $intTransIDs[$fdata['IntTransID']];
             $buf =
-                sprintf('%04X', dechex($trans['TransID'])) .
+                sprintf('%04X', $trans['TransID']) .
                 sprintf('%04X', dechex(0)) .
                 sprintf('%04X', dechex(strlen($fdata['Buffer']['Data']) / 2 + 2)) .
                 sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) .
