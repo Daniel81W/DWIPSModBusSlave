@@ -237,7 +237,7 @@
                 'ClientPort' => $trans['Port'],
                 'Broadcast' => false
             ];
-            $this->SendDebug("Received UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", $buf, 0);
+            $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", $buf, 0);
 
             $this->SendDebug("", $this->SendDataToParent(json_encode($data2send)), 0);
         }
