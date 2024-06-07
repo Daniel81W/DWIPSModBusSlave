@@ -240,7 +240,7 @@
                 'ClientPort' => $trans['Port'],
                 'Type' => 0
             ];
-            $this->SendDebug("Transmit TCP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(Type:" . $data2send['Type'] . ")]", $buf, 0);
+            $this->SendDebug("Transmit TCP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(Type:" . $data2send['Type'] . ")]", implode(' ', str_split($buf, 2)), 0);
 
             $this->SendDataToParent(json_encode($data2send));
         }
