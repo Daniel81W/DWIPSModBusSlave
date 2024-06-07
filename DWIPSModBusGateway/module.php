@@ -79,6 +79,11 @@
                     $this->ReceiveDataTCP($data);
                     break;
                 case ModBusType::ModBus_UDP:
+                    // Auf richtigen Datentyp prüfen, sonst abbrechen
+                    if ($data["DataID"] != "{9082C662-7864-D5CA-863F-53999200D897}") {
+                        $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
+                        return;
+                    }
                     $this->ReceiveDataUDP($data);
                     break;
                 case ModBusType::ModBus_RTU:
@@ -121,11 +126,6 @@
 
         private function ReceiveDataUDP(array $udpdata)
         {
-            // Auf richtigen Datentyp prüfen, sonst abbrechen
-            if ($udpdata["DataID"] != "{9082C662-7864-D5CA-863F-53999200D897}") {
-                $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
-                return;
-            }
             //UDP-spezifische Daten auslesen
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
