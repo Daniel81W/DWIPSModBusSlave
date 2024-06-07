@@ -71,6 +71,11 @@
 
             switch ($this->ReadPropertyInteger("ModbusType")) {
                 case ModBusType::ModBus_TCP:
+                    // Auf richtigen Datentyp prüfen, sonst abbrechen
+                    if ($data["DataID"] != "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}") {
+                        $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
+                        return;
+                    }
                     $this->ReceiveDataTCP($data);
                     break;
                 case ModBusType::ModBus_UDP:
@@ -102,12 +107,7 @@
 
         private function ReceiveDataTCP(array $tcpdata)
         {
-            $this->SendDebug("", $tcpdata["DataID"], 0);
-            // Auf richtigen Datentyp prüfen, sonst abbrechen
-            if ($tcpdata["DataID"] != "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}") {
-                $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
-                return;
-            }
+
             //UDP-spezifische Daten auslesen
             $clientIP = $tcpdata['ClientIP'];
             $clientPort = $tcpdata['ClientPort'];
