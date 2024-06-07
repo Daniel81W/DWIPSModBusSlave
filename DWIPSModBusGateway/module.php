@@ -175,7 +175,7 @@
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
             $trans = $intTransIDs_str[$fdata['IntTransID']];
-
+            $this->SendDebug("Slave", $trans, 0);
             $d2s = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
                 'Buffer' => '',
