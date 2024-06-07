@@ -102,6 +102,7 @@
 
         private function ReceiveDataTCP(array $tcpdata)
         {
+            $this->SendDebug("", $tcpdata["DataID"], 0);
             // Auf richtigen Datentyp prüfen, sonst abbrechen
             if ($tcpdata["DataID"] != "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}") {
                 $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
