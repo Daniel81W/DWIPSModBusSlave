@@ -188,7 +188,7 @@
 
             switch ($this->ReadPropertyInteger("ModbusType")) {
                 case ModBusType::ModBus_TCP:
-                    $this->ForwardDataTCP($data);
+                    $this->ForwardDataTCP($data, ModBusType::ModBus_TCP);
                     break;
                 case ModBusType::ModBus_UDP:
                     $this->ForwardDataUDP($data);
@@ -217,7 +217,7 @@
 
         }
 
-        public function ForwardDataTCP(array $data)
+        public function ForwardDataTCP(array $data, int $mbtype)
         {
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
             if ($intTransIDs_str == "") {
@@ -234,14 +234,18 @@
                 sprintf('%02x', $data['Buffer']['FC']) .
                 $data['Buffer']['Data'];
             $data2send = [
-                'DataID' => '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}',
                 'Buffer' => utf8_encode(hex2bin($buf)),
                 'ClientIP' => $trans['IP'],
-                'ClientPort' => $trans['Port'],
-                'Type' => 0
+                'ClientPort' => $trans['Port']
             ];
+            if ($mbtype == ModBusType::ModBus_TCP) {
+                $data2send['DataID'] = '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}';
+                $data2send['Type'] = 0;
             $this->SendDebug("Transmit TCP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(Type:" . $data2send['Type'] . ")]", implode(' ', str_split($buf, 2)), 0);
-
+            } elseif ($mbtype == ModBusType::ModBus_UDP) {
+                $data2send['DataID'] = '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}';
+                $data2send['Broadcast'] = false;
+            }
             $this->SendDataToParent(json_encode($data2send));
         }
 
