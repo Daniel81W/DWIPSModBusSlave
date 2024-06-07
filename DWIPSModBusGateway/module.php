@@ -171,10 +171,13 @@
 
         private function CheckForTransIDIP($ip, $port, $transid)
         {
-            $intTransIDs = json_decode($this->ReadAttributeString("TransIDsIP"), true);
-            $this->SendDebug("INT_ID_ARR", print_r($intTransIDs, true), 0);
+            $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
+            if ($intTransIDs_str == "") {
+                $intTransIDs = [];
+            } else {
+                $intTransIDs = json_decode($intTransIDs_str, true);
+            }
             $intTransID = array_search(['IP' => $ip, 'Port' => $port, 'TransID' => $transid], $intTransIDs, true);
-            $this->SendDebug("INT_ID", print_r($intTransID, true), 0);
             if (!$intTransID) {
                 $intTransID = $this->getNextIntTransID();
                 $intTransIDs[$intTransID] = ['IP' => $ip, 'Port' => $port, 'TransID' => $transid];

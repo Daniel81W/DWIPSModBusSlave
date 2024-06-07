@@ -44,7 +44,6 @@
         */
 
 		public function ReceiveData($JSONString) {
-            $this->SendDebug("in", "Test", 0);
             $this->SendDebug("in", $JSONString, 0);
 		}
 
