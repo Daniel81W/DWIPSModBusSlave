@@ -208,7 +208,7 @@
 
         }
 
-        public function ForwardDataTCP($data)
+        public function ForwardDataTCP(array $data)
         {
 
         }
@@ -243,32 +243,32 @@
             $this->SendDataToParent(json_encode($data2send));
         }
 
-        public function ForwardDataRTU($data)
+        public function ForwardDataRTU(array $data)
         {
 
         }
 
-        public function ForwardDataRTUTCP($data)
+        public function ForwardDataRTUTCP(array $data)
         {
 
         }
 
-        public function ForwardDataRTUUDP($data)
+        public function ForwardDataRTUUDP(array $data)
         {
 
         }
 
-        public function ForwardDataASCII($data)
+        public function ForwardDataASCII(array $data)
         {
 
         }
 
-        public function ForwardDataASCIITCP($data)
+        public function ForwardDataASCIITCP(array $data)
         {
 
         }
 
-        public function ForwardDataASCIIUDP($data)
+        public function ForwardDataASCIIUDP(array $data)
         {
 
         }
