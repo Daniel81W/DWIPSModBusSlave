@@ -114,7 +114,7 @@
             $broadcast = boolval($udpdata['Broadcast']);
             $buffer = bin2hex($udpdata['Buffer']);
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
-            $this->SendDebug("1", substr($buffer, 0, 4), 0);
+            $this->SendDebug("1", hexdec(substr($buffer, 0, 4)), 0);
             $header = [
                 'TransID' => hexdec(substr($buffer, 0, 4)),
                 'ProtoID' => hexdec(substr($buffer, 4, 4)),
