@@ -224,11 +224,11 @@
             }
             $trans = $intTransIDs[$data['IntTransID']];
             $buf =
-                sprintf('%04X', $trans['TransID']) .
-                sprintf('%04X', 0) .
-                sprintf('%04X', strlen($data['Buffer']['Data']) / 2 + 2) .
-                sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) .
-                sprintf('%02X', $data['Buffer']['FC']) .
+                sprintf('%04x', $trans['TransID']) .
+                sprintf('%04x', 0) .
+                sprintf('%04x', strlen($data['Buffer']['Data']) / 2 + 2) .
+                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02x', $data['Buffer']['FC']) .
                 $data['Buffer']['Data'];
             $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
