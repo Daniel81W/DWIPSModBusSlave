@@ -155,45 +155,7 @@
             }
         }
 
-        private function ReceiveDataUDP(array $udpdata)
-        {
-            //UDP-spezifische Daten auslesen
-            $clientIP = $udpdata['ClientIP'];
-            $clientPort = $udpdata['ClientPort'];
-            //Buffer lesen und in hex wandeln
-            $buffer = bin2hex(utf8_decode($udpdata['Buffer']));
 
-            $broadcast = boolval($udpdata['Broadcast']);
-            //Daten im Debug ausgeben
-            $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
-
-            //Aus Buffer den ModBusHeader auslesen
-            $header = [
-                'TransID' => hexdec(substr($buffer, 0, 4)), //ModBus-TransaktionsID - ersten 2 Byte
-                'ProtoID' => hexdec(substr($buffer, 4, 4)), // ModBus-ProtokollID - Byte 3+4, immer 0x0000
-                'Length' => hexdec(intval(substr($buffer, 8, 4))), //Länger der folgenden Daten (DeviceID, Functionscode und Daten) - Byte 5+6
-                'DevID' => hexdec(substr($buffer, 12, 2)) //ID des abgefragten Gerätes - Byte 7
-            ];
-            //Body des Modbusframes
-            $body = [
-                'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
-                'Data' => substr($buffer, 16, $header['Length'] * 2 - 4) //Eigentliche Daten - Länge: Length - 2 Byte
-            ];
-
-            //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
-            if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
-                //Prüfen ob es vom Absender schon eine ANfrage mit gleicher TransaktionsID gibt.
-                $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
-                //Daten für ModbusDevice
-                $data2send = [
-                    'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
-                    'IntTransID' => $intTransID,
-                    'Buffer' => $body
-                ];
-                //Daten JsonCodieren und an Device senden
-                $this->SendDataToChildren(json_encode($data2send));
-            }
-        }
 
         private function ReceiveDataRTU($rtudata)
         {
@@ -257,7 +219,30 @@
 
         public function ForwardDataTCP(array $data)
         {
+            $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
+            if ($intTransIDs_str == "") {
+                $intTransIDs = [];
+            } else {
+                $intTransIDs = json_decode($intTransIDs_str, true);
+            }
+            $trans = $intTransIDs[$data['IntTransID']];
+            $buf =
+                sprintf('%04x', $trans['TransID']) .
+                sprintf('%04x', 0) .
+                sprintf('%04x', strlen($data['Buffer']['Data']) / 2 + 2) .
+                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02x', $data['Buffer']['FC']) .
+                $data['Buffer']['Data'];
+            $data2send = [
+                'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
+                'Buffer' => utf8_encode(hex2bin($buf)),
+                'ClientIP' => $trans['IP'],
+                'ClientPort' => $trans['Port'],
+                'Type' => 0
+            ];
+            $this->SendDebug("Transmit TCP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(Type:" . $data2send['Type'] . ")]", $buf, 0);
 
+            $this->SendDataToParent(json_encode($data2send));
         }
 
         public function ForwardDataUDP(array $data)
