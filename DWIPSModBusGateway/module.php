@@ -166,7 +166,46 @@
         public function ForwardData($JSONString)
         {
             $this->SendDebug("Slave", $JSONString, 0);
-            $fdata = json_decode($JSONString, true);
+            $data = json_decode($JSONString, true);
+
+            switch ($this->ReadPropertyInteger("ModbusType")) {
+                case ModBusType::ModBus_TCP:
+                    $this->ForwardDataTCP($data);
+                    break;
+                case ModBusType::ModBus_UDP:
+                    $this->ForwardDataUDP($data);
+                    break;
+                case ModBusType::ModBus_RTU:
+                    $this->ForwardDataRTU($data);
+                    break;
+                case ModBusType::ModBus_RTU_TCP:
+                    $this->ForwardDataRTUTCP($data);
+                    break;
+                case ModBusType::ModBus_RTU_UDP:
+                    $this->ForwardDataRTUUDP($data);
+                    break;
+                case ModBusType::ModBus_ASCII:
+                    $this->ForwardDataASCII($data);
+                    break;
+                case ModBusType::ModBus_ASCII_TCP:
+                    $this->ForwardDataASCIITCP($data);
+                    break;
+                case ModBusType::ModBus_ASCII_UDP:
+                    $this->ForwardDataASCIIUDP($data);
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        public function ForwardDataTCP($data)
+        {
+
+        }
+
+        public function ForwardDataUDP($data)
+        {
 
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
             if ($intTransIDs_str == "") {
@@ -174,14 +213,14 @@
             } else {
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
-            $trans = $intTransIDs[$fdata['IntTransID']];
+            $trans = $intTransIDs[$data['IntTransID']];
             $buf =
                 sprintf('%04X', $trans['TransID']) .
                 sprintf('%04X', 0) .
-                sprintf('%04X', strlen($fdata['Buffer']['Data']) / 2 + 2) .
+                sprintf('%04X', strlen($data['Buffer']['Data']) / 2 + 2) .
                 sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) .
-                sprintf('%02X', $fdata['Buffer']['FC']) .
-                $fdata['Buffer']['Data'];
+                sprintf('%02X', $data['Buffer']['FC']) .
+                $data['Buffer']['Data'];
             $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
                 'Buffer' => hex2bin($buf),
@@ -194,6 +233,37 @@
             $this->SendDebug('5', $buf, 0);
             $this->SendDataToParent(json_encode($data2send));
         }
+
+        public function ForwardDataRTU($data)
+        {
+
+        }
+
+        public function ForwardDataRTUTCP($data)
+        {
+
+        }
+
+        public function ForwardDataRTUUDP($data)
+        {
+
+        }
+
+        public function ForwardDataASCII($data)
+        {
+
+        }
+
+        public function ForwardDataASCIITCP($data)
+        {
+
+        }
+
+        public function ForwardDataASCIIUDP($data)
+        {
+
+        }
+
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
 
