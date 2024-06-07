@@ -239,7 +239,7 @@
             ];
             $this->SendDebug("Received UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", $buf, 0);
 
-            $this->SendDataToParent(json_encode($data2send));
+            $this->SendDebug("", $this->SendDataToParent(json_encode($data2send)), 0);
         }
 
         public function ForwardDataRTU(array $data)
