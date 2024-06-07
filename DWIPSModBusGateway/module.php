@@ -169,11 +169,13 @@
             $fdata = json_decode($JSONString, true);
 
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
+            $this->SendDebug("Slave", $intTransIDs_str, 0);
             if ($intTransIDs_str == "") {
                 $intTransIDs = [];
             } else {
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
+            $this->SendDebug("Slave", $intTransIDs_str, 0);
             $trans = $intTransIDs_str[$fdata['IntTransID']];
             $this->SendDebug("Slave", $trans, 0);
             $d2s = [
