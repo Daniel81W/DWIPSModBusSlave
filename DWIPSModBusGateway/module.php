@@ -357,8 +357,9 @@
                     }
                 }
             }
-            $this->SendDebug("CRC", dechex($crc_reg), 0);
-            return "";
+            $crc = dechex($crc_reg);
+            $this->SendDebug("CRC", substr($crc, 2, 2) . substr($crc, 0, 2), 0);
+            return substr($crc, 2, 2) . substr($crc, 0, 2);
         }
     }
 
