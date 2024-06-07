@@ -248,7 +248,7 @@
                 $data['Buffer']['Data'];
             $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
-                'Buffer' => hex2bin($buf),
+                'Buffer' => hex2bin(utf8_encode($buf)),
                 'ClientIP' => $trans['IP'],
                 'ClientPort' => $trans['Port'],
                 'Broadcast' => false
