@@ -116,7 +116,7 @@
             $clientIP = $data['ClientIP'];
             $clientPort = $data['ClientPort'];
             //Buffer lesen und in hex wandeln
-            $buffer = bin2hex($data['Buffer']);
+            $buffer = bin2hex(utf8_decode($data['Buffer']));
             if ($mbtype == ModBusType::ModBus_TCP) {
                 $tcptype = $data['Type'];
                 //Daten im Debug ausgeben
