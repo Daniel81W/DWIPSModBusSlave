@@ -202,6 +202,7 @@ use DWIPS\libs\Module_GUID;
 
         private function ReceiveDataRTUTCP($rtudata)
         {
+            $this->SendDebug("RAW", "Test", 0);
             $this->SendDebug("RAW", $rtudata, 0);
         }
 
