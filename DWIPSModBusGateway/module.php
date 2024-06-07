@@ -186,7 +186,7 @@
                 'Broadcast' => false
             ];
             $this->SendDebug('4', print_r($fdata, true), 0);
-            $this->SendDebug('5', dechex($fdata['FC']), 0);
+            $this->SendDebug('5', dechex($fdata['Buffer']['FC']), 0);
             //$this->SendDataToParent(json_encode($data2send));
         }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
