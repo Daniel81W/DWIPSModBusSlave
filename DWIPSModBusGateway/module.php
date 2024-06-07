@@ -100,8 +100,22 @@
 
 		}
 
-        private function ReceiveDataTCP($tcpdata)
+        private function ReceiveDataTCP(array $tcpdata)
         {
+            // Auf richtigen Datentyp prüfen, sonst abbrechen
+            if ($tcpdata["DataID"] != "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}") {
+                $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
+                return;
+            }
+            //UDP-spezifische Daten auslesen
+            $clientIP = $tcpdata['ClientIP'];
+            $clientPort = $tcpdata['ClientPort'];
+            $tcptype = $tcpdata['Type'];
+            //Buffer lesen und in hex wandeln
+            $buffer = bin2hex($tcpdata['Buffer']);
+            //Daten im Debug ausgeben
+            $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", $buffer, 0);
+
         }
 
         private function ReceiveDataUDP(array $udpdata)
@@ -239,9 +253,7 @@
             ];
             $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", $buf, 0);
 
-            $d2s = json_encode($data2send);
-            $this->SendDebug("", $d2s, 0);
-            $this->SendDebug("", $this->SendDataToParent(json_encode($data2send)), 0);
+            $this->SendDataToParent(json_encode($data2send));
         }
 
         public function ForwardDataRTU(array $data)
