@@ -76,7 +76,7 @@
                         $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
                         return;
                     }
-                    $this->ReceiveDataTCP($data);
+                    $this->ReceiveDataTCP($data, ModBusType::ModBus_TCP);
                     break;
                 case ModBusType::ModBus_UDP:
                     // Auf richtigen Datentyp prüfen, sonst abbrechen
@@ -110,29 +110,60 @@
 
 		}
 
-        private function ReceiveDataTCP(array $tcpdata)
+        private function ReceiveDataTCP(array $data, int $mbtype)
         {
-
             //UDP-spezifische Daten auslesen
-            $clientIP = $tcpdata['ClientIP'];
-            $clientPort = $tcpdata['ClientPort'];
-            $tcptype = $tcpdata['Type'];
+            $clientIP = $data['ClientIP'];
+            $clientPort = $data['ClientPort'];
             //Buffer lesen und in hex wandeln
-            $buffer = bin2hex($tcpdata['Buffer']);
-            //Daten im Debug ausgeben
-            $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", $buffer, 0);
+            $buffer = bin2hex($data['Buffer']);
+            if ($mbtype == ModBusType::ModBus_TCP) {
+                $tcptype = $data['Type'];
+                //Daten im Debug ausgeben
+                $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", $buffer, 0);
+            } elseif ($mbtype == ModBusType::ModBus_UDP) {
+                $broadcast = boolval($data['Broadcast']);
+                //Daten im Debug ausgeben
+                $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
+            }
 
+            //Aus Buffer den ModBusHeader auslesen
+            $header = [
+                'TransID' => hexdec(substr($buffer, 0, 4)), //ModBus-TransaktionsID - ersten 2 Byte
+                'ProtoID' => hexdec(substr($buffer, 4, 4)), // ModBus-ProtokollID - Byte 3+4, immer 0x0000
+                'Length' => hexdec(intval(substr($buffer, 8, 4))), //Länger der folgenden Daten (DeviceID, Functionscode und Daten) - Byte 5+6
+                'DevID' => hexdec(substr($buffer, 12, 2)) //ID des abgefragten Gerätes - Byte 7
+            ];
+            //Body des Modbusframes
+            $body = [
+                'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
+                'Data' => substr($buffer, 16, $header['Length'] * 2 - 4) //Eigentliche Daten - Länge: Length - 2 Byte
+            ];
+
+            //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
+            if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
+                //Prüfen ob es vom Absender schon eine ANfrage mit gleicher TransaktionsID gibt.
+                $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
+                //Daten für ModbusDevice
+                $data2send = [
+                    'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
+                    'IntTransID' => $intTransID,
+                    'Buffer' => $body
+                ];
+                //Daten JsonCodieren und an Device senden
+                $this->SendDataToChildren(json_encode($data2send));
+            }
         }
 
         private function ReceiveDataUDP(array $udpdata)
         {
-            $this->SendDebug("Deb", bin2hex(utf8_decode($udpdata['Buffer'])), 0);
             //UDP-spezifische Daten auslesen
             $clientIP = $udpdata['ClientIP'];
             $clientPort = $udpdata['ClientPort'];
-            $broadcast = boolval($udpdata['Broadcast']);
             //Buffer lesen und in hex wandeln
             $buffer = bin2hex(utf8_decode($udpdata['Buffer']));
+
+            $broadcast = boolval($udpdata['Broadcast']);
             //Daten im Debug ausgeben
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
