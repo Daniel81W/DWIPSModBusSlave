@@ -175,7 +175,13 @@
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
             $trans = $intTransIDs[$fdata['IntTransID']];
-            $buf = sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) . sprintf('%02X', dechex($fdata['Buffer']['FC'])) . $fdata['Buffer']['Data'];
+            $buf =
+                sprintf('%04X', dechex($trans['TransID'])) .
+                sprintf('%04X', dechex(0)) .
+                sprintf('%04X', dechex(strlen($fdata['Buffer']['Data']) / 2 + 2)) .
+                sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02X', dechex($fdata['Buffer']['FC'])) .
+                $fdata['Buffer']['Data'];
             $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
                 'Buffer' => $buf,
