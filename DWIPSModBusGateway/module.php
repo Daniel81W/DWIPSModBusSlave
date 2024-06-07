@@ -4,9 +4,12 @@
     /** @noinspection PhpRedundantClosingTagInspection */
 include_once(__DIR__ . "/../libs/ModBus_Type.php");
 include_once(__DIR__ . "/../libs/IO_Datatype.php");
+include_once(__DIR__ . "/../libs/Module_GUID.php");
 
-use DWIPS\libs\IO_Datatype;
+
 use DWIPS\ModBus\libs\ModBus_Type;
+use DWIPS\libs\IO_Datatype;
+use DWIPS\libs\Module_GUID;
 
 
     class DWIPSModBusGateway extends IPSModule {
@@ -42,16 +45,16 @@ use DWIPS\ModBus\libs\ModBus_Type;
                 case ModBus_Type::ModBus_TCP:
                 case ModBus_Type::ModBus_RTU_TCP:
                 case ModBus_Type::ModBus_ASCII_TCP:
-                    $this->ForceParent("{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}");
+                $this->ForceParent(Module_GUID::Server_Socket);
                     break;
                 case ModBus_Type::ModBus_UDP:
                 case ModBus_Type::ModBus_RTU_UDP:
                 case ModBus_Type::ModBus_ASCII_UDP:
-                    $this->ForceParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
+                $this->ForceParent(Module_GUID::UDP_Socket);
                     break;
                 case ModBus_Type::ModBus_RTU:
                 case ModBus_Type::ModBus_ASCII:
-                    $this->ForceParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
+                $this->ForceParent(Module_GUID::Serial_Port);
                     break;
                 default:
                     break;
@@ -376,30 +379,4 @@ use DWIPS\ModBus\libs\ModBus_Type;
             return $this->GenerateCRC($hexdata) == $crc;
         }
     }
-
-class AModBus_Type
-{
-    const ModBus_TCP = 0;
-    const ModBus_UDP = 1;
-    const ModBus_RTU = 2;
-    const ModBus_RTU_TCP = 3;
-    const ModBus_RTU_UDP = 4;
-    const ModBus_ASCII = 5;
-    const ModBus_ASCII_TCP = 6;
-    const ModBus_ASCII_UDP = 7;
-
-}
-
-class AIO_Datatype
-{
-    const Simple_RX = "{018EF6B5-AB94-40C6-AA53-46943E824ACF}";
-    const Simple_TX = "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}";
-    const EXT_Socket_RX = "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}";
-    const EXT_Socket_TX = "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}";
-    const EXT_UDP_RX = "{9082C662-7864-D5CA-863F-53999200D897}";
-    const EXT_UDP_TX = "{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}";
-
-    const DWIPS_MODBUS_RX = "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}";
-    const DWIPS_MODBUS_TX = "{A590DFA2-E37C-CEA6-12C5-457C47323E4C}";
-}
 ?>
