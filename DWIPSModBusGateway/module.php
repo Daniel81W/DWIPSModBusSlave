@@ -153,8 +153,6 @@
                 //Daten JsonCodieren und an Device senden
                 $this->SendDataToChildren(json_encode($data2send));
             }
-
-            $this->CRCGenerator("1103006B0003");
         }
 
 
@@ -193,7 +191,7 @@
                     $this->ForwardDataTCP($data, ModBusType::ModBus_TCP);
                     break;
                 case ModBusType::ModBus_UDP:
-                    $this->ForwardDataUDP($data);
+                    $this->ForwardDataTCP($data, ModBusType::ModBus_UDP);
                     break;
                 case ModBusType::ModBus_RTU:
                     $this->ForwardDataRTU($data);
@@ -340,9 +338,8 @@
             return $next;
         }
 
-        private function CRCGenerator(string $hexdata): string
+        private function GenerateCRC(string $hexdata): string
         {
-
             $crc_reg = 0xffff;
 
             for ($i = 0; $i < strlen($hexdata); $i += 2) {
@@ -358,8 +355,12 @@
                 }
             }
             $crc = dechex($crc_reg);
-            $this->SendDebug("CRC", substr($crc, 2, 2) . substr($crc, 0, 2), 0);
             return substr($crc, 2, 2) . substr($crc, 0, 2);
+        }
+
+        private function CheckCRC(string $hexdata, string $crc)
+        {
+            return $this->GenerateCRC($hexdata) == $crc;
         }
     }
 
