@@ -52,13 +52,14 @@
                 return;
             }
             $intTransID = $mbdata['IntTransID'];
+            $devID = $mbdata['Buffer']['DevID'];
             $fc = $mbdata['Buffer']['FC'];
             $data = $mbdata['Buffer']['Data'];
 
             $retDat = [
                 "DataID" => '{A590DFA2-E37C-CEA6-12C5-457C47323E4C}',
                 'IntTransID' => $intTransID,
-                'Buffer' => ['FC' => $fc, 'Data' => '02001a']
+                'Buffer' => ['DevID' => $devID, 'FC' => $fc, 'Data' => '02001a']
             ];
             switch ($fc) {
                 case 3:

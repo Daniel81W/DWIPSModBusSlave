@@ -148,16 +148,17 @@ use DWIPS\libs\Module_GUID;
                 'TransID' => hexdec(substr($buffer, 0, 4)), //ModBus-TransaktionsID - ersten 2 Byte
                 'ProtoID' => hexdec(substr($buffer, 4, 4)), // ModBus-ProtokollID - Byte 3+4, immer 0x0000
                 'Length' => hexdec(intval(substr($buffer, 8, 4))), //Länger der folgenden Daten (DeviceID, Functionscode und Daten) - Byte 5+6
-                'DevID' => hexdec(substr($buffer, 12, 2)) //ID des abgefragten Gerätes - Byte 7
+
             ];
             //Body des Modbusframes
             $body = [
+                'DevID' => hexdec(substr($buffer, 12, 2)), //ID des abgefragten Gerätes - Byte 7
                 'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
                 'Data' => substr($buffer, 16, $header['Length'] * 2 - 4) //Eigentliche Daten - Länge: Length - 2 Byte
             ];
 
             //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
-            if ($header['ProtoID'] == 0 && $header['DevID'] == $this->ReadPropertyInteger("DeviceID")) {
+            if ($header['ProtoID'] == 0) {
                 //Prüfen ob es vom Absender schon eine ANfrage mit gleicher TransaktionsID gibt.
                 $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
                 //Daten für ModbusDevice
@@ -184,6 +185,7 @@ use DWIPS\libs\Module_GUID;
 
             //Body des Modbusframes
             $body = [
+                'DevID' => hexdec(substr($buffer, 0, 2)), //ID des abgefragten Gerätes - Byte 7
                 'FC' => hexdec(substr($buffer, 2, 2)), //Funktionscode - 1 Byte
                 'Data' => substr($buffer, 4, strlen($buffer) - 8) //Eigentliche Daten - Länge: -4 Byte
             ];
@@ -268,7 +270,7 @@ use DWIPS\libs\Module_GUID;
                 sprintf('%04x', $trans['TransID']) .
                 sprintf('%04x', 0) .
                 sprintf('%04x', strlen($data['Buffer']['Data']) / 2 + 2) .
-                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02x', $data['Buffer']['DevID']) .
                 sprintf('%02x', $data['Buffer']['FC']) .
                 $data['Buffer']['Data'];
             $data2send = [
@@ -320,7 +322,7 @@ use DWIPS\libs\Module_GUID;
         public function ForwardDataRTU(array $data)
         {
             $buf =
-                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02x', $data['Buffer']['DevID']) .
                 sprintf('%02x', $data['Buffer']['FC']) .
                 $data['Buffer']['Data'];
             $buf .= $this->GenerateCRC($buf);
