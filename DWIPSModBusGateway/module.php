@@ -169,24 +169,21 @@
             $fdata = json_decode($JSONString, true);
 
             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
-            $this->SendDebug("1", $intTransIDs_str, 0);
             if ($intTransIDs_str == "") {
                 $intTransIDs = [];
             } else {
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
-            $this->SendDebug("2", print_r($intTransIDs, true), 0);
             $trans = $intTransIDs[$fdata['IntTransID']];
-            $this->SendDebug("3", print_r($trans, true), 0);
+            $buf = sprintf('%02X', $this->ReadPropertyInteger("DeviceID")) . sprintf('%02X', dechex($fdata['Buffer']['FC'])) . $fdata['Buffer']['Data'];
             $data2send = [
                 'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
-                'Buffer' => '',
+                'Buffer' => $buf,
                 'ClientIP' => $trans['IP'],
                 'ClientPort' => $trans['Port'],
                 'Broadcast' => false
             ];
-            $this->SendDebug('4', print_r($fdata, true), 0);
-            $this->SendDebug('5', sprintf('%02X', dechex($fdata['Buffer']['FC'])), 0);
+            $this->SendDebug('5', $buf, 0);
             //$this->SendDataToParent(json_encode($data2send));
         }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
