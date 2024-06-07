@@ -132,7 +132,7 @@
             $clientPort = $udpdata['ClientPort'];
             $broadcast = boolval($udpdata['Broadcast']);
             //Buffer lesen und in hex wandeln
-            $buffer = bin2hex($udpdata['Buffer']);
+            $buffer = bin2hex(utf8_decode($udpdata['Buffer']));
             //Daten im Debug ausgeben
             $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
 
