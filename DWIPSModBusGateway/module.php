@@ -346,7 +346,7 @@
             $crc_reg = 0xffff;
 
             for ($i = 0; $i < strlen($hexdata); $i += 2) {
-                $crc_reg = $crc_reg ^ hexdec(substr($hexdata, $i, 2));
+                $crc_reg = $crc_reg ^ hexdec("00" . substr($hexdata, $i, 2));
 
                 for ($j = 0; $j < 8; $j++) {
                     $crc_reg >> 1;
