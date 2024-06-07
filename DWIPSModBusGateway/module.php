@@ -175,7 +175,7 @@
             } else {
                 $intTransIDs = json_decode($intTransIDs_str, true);
             }
-            $this->SendDebug("2", $intTransIDs_str, 0);
+            $this->SendDebug("2", $intTransIDs, 0);
             $trans = $intTransIDs_str[$fdata['IntTransID']];
             $this->SendDebug("3", $trans, 0);
             $d2s = [
