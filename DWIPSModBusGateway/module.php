@@ -178,7 +178,7 @@
             if (!$intTransID) {
                 $intTransID = $this->getNextIntTransID();
                 $intTransIDs[$intTransID] = ['IP' => $ip, 'Port' => $port, 'TransID' => $transid];
-
+                $this->WriteAttributeString("TransIDsIP", json_encode($intTransIDs));
             }
             return $intTransID;
         }
