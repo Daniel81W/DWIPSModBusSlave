@@ -319,7 +319,18 @@ use DWIPS\libs\Module_GUID;
 
         public function ForwardDataRTU(array $data)
         {
+            $buf =
+                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                sprintf('%02x', $data['Buffer']['FC']) .
+                $data['Buffer']['Data'];
+            $buf .= $this->GenerateCRC($buf);
+            $data2send = [
+                'DataID' => IO_Datatype::Simple_TX,
+                'Buffer' => utf8_encode(hex2bin($buf))
+            ];
+            $this->SendDebug("Transmit RTU", implode(' ', str_split($buf, 2)), 0);
 
+            $this->SendDataToParent(json_encode($data2send));
         }
 
         public function ForwardDataRTUTCP(array $data)
