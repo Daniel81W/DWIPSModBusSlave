@@ -166,6 +166,25 @@
         public function ForwardData($JSONString)
         {
             $this->SendDebug("Slave", $JSONString, 0);
+            $fdata = json_decode($JSONString, true);
+
+            $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
+            if ($intTransIDs_str == "") {
+                $intTransIDs = [];
+            } else {
+                $intTransIDs = json_decode($intTransIDs_str, true);
+            }
+            $trans = $intTransIDs_str[$fdata['IntTransID']];
+
+            $d2s = [
+                'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
+                'Buffer' => '',
+                'ClientIP' => $trans['IP'],
+                'ClientPort' => $trans['Port'],
+                'Broadcast' => false
+            ];
+            $this->SendDebug('1', dechex($fdata['FC']), 0);
+            //$this->SendDataToParent(json_encode());
         }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
