@@ -187,8 +187,16 @@ use DWIPS\libs\Module_GUID;
                 'FC' => hexdec(substr($buffer, 2, 2)), //Funktionscode - 1 Byte
                 'Data' => substr($buffer, 4, strlen($buffer) - 8) //Eigentliche Daten - Länge: -4 Byte
             ];
-            $this->SendDebug('CRC', $this->GenerateCRC(substr($buffer, 0, strlen($buffer) - 4)) . "  -  " . substr($buffer, strlen($buffer) - 4, 4), 0);
-            $this->SendDebug('CRC', $this->CheckCRC(substr($buffer, 0, strlen($buffer) - 4), substr($buffer, strlen($buffer) - 4, 4)), 0);
+            if ($this->CheckCRC(substr($buffer, 0, strlen($buffer) - 4), substr($buffer, strlen($buffer) - 4, 4))) {
+                //Daten für ModbusDevice
+                $data2send = [
+                    'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
+                    'IntTransID' => null,
+                    'Buffer' => $body
+                ];
+                //Daten JsonCodieren und an Device senden
+                $this->SendDataToChildren(json_encode($data2send));
+            }
         }
 
         private function ReceiveDataRTUTCP($rtudata)
