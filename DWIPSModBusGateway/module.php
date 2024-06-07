@@ -103,10 +103,10 @@ use DWIPS\libs\Module_GUID;
                     $this->ReceiveDataRTU($data, ModBus_Type::ModBus_RTU);
                     break;
                 case ModBus_Type::ModBus_RTU_TCP:
-                    $this->ReceiveDataRTUTCP($data);
+                    $this->ReceiveDataRTUTCP($data, ModBus_Type::ModBus_RTU_TCP);
                     break;
                 case ModBus_Type::ModBus_RTU_UDP:
-                    $this->ReceiveDataRTUUDP($data);
+                    $this->ReceiveDataRTUTCP($data, ModBus_Type::ModBus_RTU_UDP);
                     break;
                 case ModBus_Type::ModBus_ASCII:
                     $this->ReceiveDataASCII($data);
@@ -147,7 +147,6 @@ use DWIPS\libs\Module_GUID;
                 'TransID' => hexdec(substr($buffer, 0, 4)), //ModBus-TransaktionsID - ersten 2 Byte
                 'ProtoID' => hexdec(substr($buffer, 4, 4)), // ModBus-ProtokollID - Byte 3+4, immer 0x0000
                 'Length' => hexdec(intval(substr($buffer, 8, 4))), //Länger der folgenden Daten (DeviceID, Functionscode und Daten) - Byte 5+6
-
             ];
             //Body des Modbusframes
             $body = [
@@ -200,10 +199,43 @@ use DWIPS\libs\Module_GUID;
             }
         }
 
-        private function ReceiveDataRTUTCP($rtudata)
+        private function ReceiveDataRTUTCP($rtudata, int $mbtype)
         {
-            $this->SendDebug("RAW", "Test", 0);
-            $this->SendDebug("RAW", $rtudata, 0);
+            //IP-spezifische Daten auslesen
+            $clientIP = $rtudata['ClientIP'];
+            $clientPort = $rtudata['ClientPort'];
+            //Buffer lesen und in hex wandeln
+            $buffer = bin2hex(utf8_decode($rtudata['Buffer']));
+            //Bei Übertragung über TCP
+            if ($mbtype == ModBus_Type::ModBus_RTU_TCP) {
+                $tcptype = $rtudata['Type'];
+                //Daten im Debug ausgeben
+                $this->SendDebug("Received RTU over TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", implode(' ', str_split($buffer, 2)), 0);
+            } //Bei Übertragung über UDP
+            elseif ($mbtype == ModBus_Type::ModBus_RTU_UDP) {
+                $broadcast = boolval($rtudata['Broadcast']);
+                //Daten im Debug ausgeben
+                $this->SendDebug("Received RTU over UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", implode(' ', str_split($buffer, 2)), 0);
+            }
+
+            //Body des Modbusframes
+            $body = [
+                'DevID' => hexdec(substr($buffer, 12, 2)), //ID des abgefragten Gerätes - Byte 7
+                'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
+                'Data' => substr($buffer, 16, strlen($buffer) * 2 - 8), //Eigentliche Daten - Länge: Length - 2 Byte
+                'CRC' => substr($buffer, strlen($buffer) * 2 - 4, 4)
+            ];
+
+            //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
+
+            $data2send = [
+                'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
+                'IntTransID' => null,
+                'Buffer' => $body
+            ];
+            //Daten JsonCodieren und an Device senden
+            $this->SendDataToChildren(json_encode($data2send));
+
         }
 
         private function ReceiveDataRTUUDP($rtudata)
