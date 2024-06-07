@@ -324,6 +324,8 @@ use DWIPS\libs\Module_GUID;
                 sprintf('%02x', $data['Buffer']['FC']) .
                 $data['Buffer']['Data'];
             $buf .= $this->GenerateCRC($buf);
+            $buf = substr($buf, 0, strlen($buf) - 1) . "a";
+
             $data2send = [
                 'DataID' => IO_Datatype::Simple_TX,
                 'Buffer' => utf8_encode(hex2bin($buf))
