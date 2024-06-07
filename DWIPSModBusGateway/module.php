@@ -175,6 +175,20 @@ use DWIPS\libs\Module_GUID;
 
         private function ReceiveDataRTU($rtudata)
         {
+            //Buffer lesen und in hex wandeln
+            $buffer = bin2hex(utf8_decode($rtudata['Buffer']));
+
+            //Aus Buffer den ModBusHeader auslesen
+
+            $DevID = hexdec(substr($buffer, 0, 2)); //ID des abgefragten Gerätes - Byte 0
+
+            //Body des Modbusframes
+            $body = [
+                'FC' => hexdec(substr($buffer, 2, 2)), //Funktionscode - 1 Byte
+                'Data' => substr($buffer, 4, strlen($buffer) - 8) //Eigentliche Daten - Länge: -4 Byte
+            ];
+
+            $this->SendDebug('CRC', $this->CheckCRC(substr($buffer, 0, strlen($buffer) - 4), substr($buffer, strlen($buffer - 4), 4)), 0);
         }
 
         private function ReceiveDataRTUTCP($rtudata)
@@ -374,7 +388,7 @@ use DWIPS\libs\Module_GUID;
             return substr($crc, 2, 2) . substr($crc, 0, 2);
         }
 
-        private function CheckCRC(string $hexdata, string $crc)
+        private function CheckCRC(string $hexdata, string $crc): bool
         {
             return $this->GenerateCRC($hexdata) == $crc;
         }
