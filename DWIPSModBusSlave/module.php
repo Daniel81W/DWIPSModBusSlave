@@ -17,6 +17,9 @@ use DWIPS\libs\Module_GUID;
 		{
 			//Never delete this line!
 			parent::Create();
+
+            $this->RegisterPropertyInteger("DeviceID", 1);
+
             $this->ForceParent(Module_GUID::DWIPS_ModBus_Gateway);
 
 		}

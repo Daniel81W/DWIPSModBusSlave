@@ -20,7 +20,6 @@ use DWIPS\libs\Module_GUID;
 			parent::Create();
 
             $this->RegisterPropertyInteger("ModbusType", ModBus_Type::ModBus_TCP);
-            $this->RegisterPropertyInteger("DeviceID", 1);
 
             $this->RegisterAttributeString("TransIDsIP", json_encode(array()));
             $this->RegisterAttributeInteger("InternalTransIDCounter", 1);
