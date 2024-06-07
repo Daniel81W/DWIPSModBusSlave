@@ -120,11 +120,11 @@
             if ($mbtype == ModBusType::ModBus_TCP) {
                 $tcptype = $data['Type'];
                 //Daten im Debug ausgeben
-                $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", $buffer, 0);
+                $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", implode(' ', str_split($buffer, 2)), 0);
             } elseif ($mbtype == ModBusType::ModBus_UDP) {
                 $broadcast = boolval($data['Broadcast']);
                 //Daten im Debug ausgeben
-                $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", $buffer, 0);
+                $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", implode(' ', str_split($buffer, 2)), 0);
             }
 
             //Aus Buffer den ModBusHeader auslesen
