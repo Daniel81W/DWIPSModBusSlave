@@ -349,7 +349,7 @@
                 $crc_reg = $crc_reg ^ hexdec("00" . substr($hexdata, $i, 2));
 
                 for ($j = 0; $j < 8; $j++) {
-                    if (($crc_reg ^ 0x0001) == 1) {
+                    if (($crc_reg & 0x0001) == 1) {
                         $crc_reg = $crc_reg >> 1;
                         $crc_reg = $crc_reg ^ 0xA001;
                     } else {
