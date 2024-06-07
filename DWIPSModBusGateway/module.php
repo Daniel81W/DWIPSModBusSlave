@@ -2,6 +2,12 @@
     /** @noinspection PhpExpressionResultUnusedInspection */
     /** @noinspection PhpUnused */
     /** @noinspection PhpRedundantClosingTagInspection */
+include_once(__DIR__ . "/../libs/ModBus_Type.php");
+include_once(__DIR__ . "/../libs/IO_Datatype.php");
+
+use DWIPS\libs\IO_Datatype;
+use DWIPS\ModBus\libs\ModBus_Type;
+
 
     class DWIPSModBusGateway extends IPSModule {
 
@@ -10,7 +16,7 @@
 			//Never delete this line!
 			parent::Create();
 
-            $this->RegisterPropertyInteger("ModbusType", ModBusType::ModBus_TCP);
+            $this->RegisterPropertyInteger("ModbusType", ModBus_Type::ModBus_TCP);
             $this->RegisterPropertyInteger("DeviceID", 1);
 
             $this->RegisterAttributeString("TransIDsIP", json_encode(array()));
@@ -33,18 +39,18 @@
 			parent::ApplyChanges();
 
             switch ($this->ReadPropertyInteger("ModbusType")) {
-                case ModBusType::ModBus_TCP:
-                case ModBusType::ModBus_RTU_TCP:
-                case ModBusType::ModBus_ASCII_TCP:
+                case ModBus_Type::ModBus_TCP:
+                case ModBus_Type::ModBus_RTU_TCP:
+                case ModBus_Type::ModBus_ASCII_TCP:
                     $this->ForceParent("{8062CF2B-600E-41D6-AD4B-1BA66C32D6ED}");
                     break;
-                case ModBusType::ModBus_UDP:
-                case ModBusType::ModBus_RTU_UDP:
-                case ModBusType::ModBus_ASCII_UDP:
+                case ModBus_Type::ModBus_UDP:
+                case ModBus_Type::ModBus_RTU_UDP:
+                case ModBus_Type::ModBus_ASCII_UDP:
                     $this->ForceParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
                     break;
-                case ModBusType::ModBus_RTU:
-                case ModBusType::ModBus_ASCII:
+                case ModBus_Type::ModBus_RTU:
+                case ModBus_Type::ModBus_ASCII:
                     $this->ForceParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
                     break;
                 default:
@@ -70,38 +76,43 @@
             $data = json_decode($JSONString, true);
 
             switch ($this->ReadPropertyInteger("ModbusType")) {
-                case ModBusType::ModBus_TCP:
+                case ModBus_Type::ModBus_TCP:
                     // Auf richtigen Datentyp prüfen, sonst abbrechen
-                    if ($data["DataID"] != "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}") {
+                    if ($data["DataID"] != IO_Datatype::EXT_Socket_RX) {
                         $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
                         return;
                     }
-                    $this->ReceiveDataTCP($data, ModBusType::ModBus_TCP);
+                    $this->ReceiveDataTCP($data, ModBus_Type::ModBus_TCP);
                     break;
-                case ModBusType::ModBus_UDP:
+                case ModBus_Type::ModBus_UDP:
                     // Auf richtigen Datentyp prüfen, sonst abbrechen
-                    if ($data["DataID"] != "{9082C662-7864-D5CA-863F-53999200D897}") {
+                    if ($data["DataID"] != IO_Datatype::EXT_UDP_RX) {
                         $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
                         return;
                     }
-                    $this->ReceiveDataTCP($data, ModBusType::ModBus_UDP);
+                    $this->ReceiveDataTCP($data, ModBus_Type::ModBus_UDP);
                     break;
-                case ModBusType::ModBus_RTU:
-                    $this->ReceiveDataRTU($data);
+                case ModBus_Type::ModBus_RTU:
+                    // Auf richtigen Datentyp prüfen, sonst abbrechen
+                    if ($data["DataID"] != IO_Datatype::Simple_RX) {
+                        $this->LogMessage("Empfangener Datentyp passt nicht zum Modbustypen", KL_ERROR);
+                        return;
+                    }
+                    $this->ReceiveDataRTU($data, ModBus_Type::ModBus_RTU);
                     break;
-                case ModBusType::ModBus_RTU_TCP:
+                case ModBus_Type::ModBus_RTU_TCP:
                     $this->ReceiveDataRTUTCP($data);
                     break;
-                case ModBusType::ModBus_RTU_UDP:
+                case ModBus_Type::ModBus_RTU_UDP:
                     $this->ReceiveDataRTUUDP($data);
                     break;
-                case ModBusType::ModBus_ASCII:
+                case ModBus_Type::ModBus_ASCII:
                     $this->ReceiveDataASCII($data);
                     break;
-                case ModBusType::ModBus_ASCII_TCP:
+                case ModBus_Type::ModBus_ASCII_TCP:
                     $this->ReceiveDataASCIITCP($data);
                     break;
-                case ModBusType::ModBus_ASCII_UDP:
+                case ModBus_Type::ModBus_ASCII_UDP:
                     $this->ReceiveDataASCIIUDP($data);
                     break;
                 default:
@@ -112,16 +123,18 @@
 
         private function ReceiveDataTCP(array $data, int $mbtype)
         {
-            //UDP-spezifische Daten auslesen
+            //IP-spezifische Daten auslesen
             $clientIP = $data['ClientIP'];
             $clientPort = $data['ClientPort'];
             //Buffer lesen und in hex wandeln
             $buffer = bin2hex(utf8_decode($data['Buffer']));
-            if ($mbtype == ModBusType::ModBus_TCP) {
+            //Bei Übertragung über TCP
+            if ($mbtype == ModBus_Type::ModBus_TCP) {
                 $tcptype = $data['Type'];
                 //Daten im Debug ausgeben
                 $this->SendDebug("Received TCP [" . $clientIP . ":" . $clientPort . "(Type:" . $tcptype . ")]", implode(' ', str_split($buffer, 2)), 0);
-            } elseif ($mbtype == ModBusType::ModBus_UDP) {
+            } //Bei Übertragung über UDP
+            elseif ($mbtype == ModBus_Type::ModBus_UDP) {
                 $broadcast = boolval($data['Broadcast']);
                 //Daten im Debug ausgeben
                 $this->SendDebug("Received UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", implode(' ', str_split($buffer, 2)), 0);
@@ -146,7 +159,7 @@
                 $intTransID = $this->CheckForTransIDIP($clientIP, $clientPort, $header['TransID']);
                 //Daten für ModbusDevice
                 $data2send = [
-                    'DataID' => '{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}',
+                    'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
                     'IntTransID' => $intTransID,
                     'Buffer' => $body
                 ];
@@ -187,28 +200,28 @@
             $data = json_decode($JSONString, true);
 
             switch ($this->ReadPropertyInteger("ModbusType")) {
-                case ModBusType::ModBus_TCP:
-                    $this->ForwardDataTCP($data, ModBusType::ModBus_TCP);
+                case ModBus_Type::ModBus_TCP:
+                    $this->ForwardDataTCP($data, ModBus_Type::ModBus_TCP);
                     break;
-                case ModBusType::ModBus_UDP:
-                    $this->ForwardDataTCP($data, ModBusType::ModBus_UDP);
+                case ModBus_Type::ModBus_UDP:
+                    $this->ForwardDataTCP($data, ModBus_Type::ModBus_UDP);
                     break;
-                case ModBusType::ModBus_RTU:
+                case ModBus_Type::ModBus_RTU:
                     $this->ForwardDataRTU($data);
                     break;
-                case ModBusType::ModBus_RTU_TCP:
+                case ModBus_Type::ModBus_RTU_TCP:
                     $this->ForwardDataRTUTCP($data);
                     break;
-                case ModBusType::ModBus_RTU_UDP:
+                case ModBus_Type::ModBus_RTU_UDP:
                     $this->ForwardDataRTUUDP($data);
                     break;
-                case ModBusType::ModBus_ASCII:
+                case ModBus_Type::ModBus_ASCII:
                     $this->ForwardDataASCII($data);
                     break;
-                case ModBusType::ModBus_ASCII_TCP:
+                case ModBus_Type::ModBus_ASCII_TCP:
                     $this->ForwardDataASCIITCP($data);
                     break;
-                case ModBusType::ModBus_ASCII_UDP:
+                case ModBus_Type::ModBus_ASCII_UDP:
                     $this->ForwardDataASCIIUDP($data);
                     break;
                 default:
@@ -238,46 +251,46 @@
                 'ClientIP' => $trans['IP'],
                 'ClientPort' => $trans['Port']
             ];
-            if ($mbtype == ModBusType::ModBus_TCP) {
-                $data2send['DataID'] = '{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}';
+            if ($mbtype == ModBus_Type::ModBus_TCP) {
+                $data2send['DataID'] = IO_Datatype::EXT_Socket_TX;
                 $data2send['Type'] = 0;
                 $this->SendDebug("Transmit TCP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(Type:" . $data2send['Type'] . ")]", implode(' ', str_split($buf, 2)), 0);
-            } elseif ($mbtype == ModBusType::ModBus_UDP) {
-                $data2send['DataID'] = '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}';
+            } elseif ($mbtype == ModBus_Type::ModBus_UDP) {
+                $data2send['DataID'] = IO_Datatype::EXT_UDP_TX;
                 $data2send['Broadcast'] = false;
                 $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", implode(' ', str_split($buf, 2)), 0);
             }
             $this->SendDataToParent(json_encode($data2send));
         }
 
-        public function ForwardDataUDP(array $data)
-        {
+        /* public function ForwardDataUDP(array $data)
+         {
 
-            $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
-            if ($intTransIDs_str == "") {
-                $intTransIDs = [];
-            } else {
-                $intTransIDs = json_decode($intTransIDs_str, true);
-            }
-            $trans = $intTransIDs[$data['IntTransID']];
-            $buf =
-                sprintf('%04x', $trans['TransID']) .
-                sprintf('%04x', 0) .
-                sprintf('%04x', strlen($data['Buffer']['Data']) / 2 + 2) .
-                sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
-                sprintf('%02x', $data['Buffer']['FC']) .
-                $data['Buffer']['Data'];
-            $data2send = [
-                'DataID' => '{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}',
-                'Buffer' => utf8_encode(hex2bin($buf)),
-                'ClientIP' => $trans['IP'],
-                'ClientPort' => $trans['Port'],
-                'Broadcast' => false
-            ];
-            $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", implode(' ', str_split($buf, 2)), 0);
+             $intTransIDs_str = $this->ReadAttributeString("TransIDsIP");
+             if ($intTransIDs_str == "") {
+                 $intTransIDs = [];
+             } else {
+                 $intTransIDs = json_decode($intTransIDs_str, true);
+             }
+             $trans = $intTransIDs[$data['IntTransID']];
+             $buf =
+                 sprintf('%04x', $trans['TransID']) .
+                 sprintf('%04x', 0) .
+                 sprintf('%04x', strlen($data['Buffer']['Data']) / 2 + 2) .
+                 sprintf('%02x', $this->ReadPropertyInteger("DeviceID")) .
+                 sprintf('%02x', $data['Buffer']['FC']) .
+                 $data['Buffer']['Data'];
+             $data2send = [
+                 'DataID' => IO_Datatype::EXT_UDP_TX,
+                 'Buffer' => utf8_encode(hex2bin($buf)),
+                 'ClientIP' => $trans['IP'],
+                 'ClientPort' => $trans['Port'],
+                 'Broadcast' => false
+             ];
+             $this->SendDebug("Transmit UDP [" . $data2send['ClientIP'] . ":" . $data2send['ClientPort'] . "(BC:" . $data2send['Broadcast'] . ")]", implode(' ', str_split($buf, 2)), 0);
 
-            $this->SendDataToParent(json_encode($data2send));
-        }
+             $this->SendDataToParent(json_encode($data2send));
+         }*/
 
         public function ForwardDataRTU(array $data)
         {
@@ -364,7 +377,7 @@
         }
     }
 
-class ModBusType
+class AModBus_Type
 {
     const ModBus_TCP = 0;
     const ModBus_UDP = 1;
@@ -375,5 +388,18 @@ class ModBusType
     const ModBus_ASCII_TCP = 6;
     const ModBus_ASCII_UDP = 7;
 
+}
+
+class AIO_Datatype
+{
+    const Simple_RX = "{018EF6B5-AB94-40C6-AA53-46943E824ACF}";
+    const Simple_TX = "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}";
+    const EXT_Socket_RX = "{7A1272A4-CBDB-46EF-BFC6-DCF4A53D2FC7}";
+    const EXT_Socket_TX = "{C8792760-65CF-4C53-B5C7-A30FCC84FEFE}";
+    const EXT_UDP_RX = "{9082C662-7864-D5CA-863F-53999200D897}";
+    const EXT_UDP_TX = "{8E4D9B23-E0F2-1E05-41D8-C21EA53B8706}";
+
+    const DWIPS_MODBUS_RX = "{CF28C131-AE67-4DE9-7749-D95E8DC7FCAB}";
+    const DWIPS_MODBUS_TX = "{A590DFA2-E37C-CEA6-12C5-457C47323E4C}";
 }
 ?>
