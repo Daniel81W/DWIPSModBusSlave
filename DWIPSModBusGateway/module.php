@@ -190,7 +190,7 @@
                 'Broadcast' => false
             ];
             $this->SendDebug('5', $buf, 0);
-            //$this->SendDataToParent(json_encode($data2send));
+            $this->SendDataToParent(json_encode($data2send));
         }
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
 
