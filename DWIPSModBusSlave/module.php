@@ -58,7 +58,7 @@
             $retDat = [
                 "DataID" => '{A590DFA2-E37C-CEA6-12C5-457C47323E4C}',
                 'IntTransID' => $intTransID,
-                ['FC' => $fc, 'Data' => '02001A']
+                'Buffer' => ['FC' => $fc, 'Data' => '02001A']
             ];
             switch ($fc) {
                 case 3:
