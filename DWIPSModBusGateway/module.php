@@ -217,25 +217,24 @@ use DWIPS\libs\Module_GUID;
                 //Daten im Debug ausgeben
                 $this->SendDebug("Received RTU over UDP [" . $clientIP . ":" . $clientPort . "(BC:" . $broadcast . ")]", implode(' ', str_split($buffer, 2)), 0);
             }
+            /*
+                        //Body des Modbusframes
+                        $body = [
+                            'DevID' => hexdec(substr($buffer, 12, 2)), //ID des abgefragten Gerätes - Byte 7
+                            'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
+                            'Data' => substr($buffer, 16, strlen($buffer) * 2 - 8) //Eigentliche Daten - Länge: Length - 2 Byte
+                        ];
 
-            //Body des Modbusframes
-            $body = [
-                'DevID' => hexdec(substr($buffer, 12, 2)), //ID des abgefragten Gerätes - Byte 7
-                'FC' => hexdec(substr($buffer, 14, 2)), //Funktionscode - 1 Byte
-                'Data' => substr($buffer, 16, strlen($buffer) * 2 - 8), //Eigentliche Daten - Länge: Length - 2 Byte
-                'CRC' => substr($buffer, strlen($buffer) * 2 - 4, 4)
-            ];
-
-            //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
-
-            $data2send = [
-                'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
-                'IntTransID' => null,
-                'Buffer' => $body
-            ];
-            //Daten JsonCodieren und an Device senden
-            $this->SendDataToChildren(json_encode($data2send));
-
+                        //Prüfen ob Protokoll = 0x0000 und ob abgefragte DeviceID gleich der dieser Instanz
+                        substr($buffer, strlen($buffer) * 2 - 4, 4)
+                        $data2send = [
+                            'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
+                            'IntTransID' => null,
+                            'Buffer' => $body
+                        ];
+                        //Daten JsonCodieren und an Device senden
+                        $this->SendDataToChildren(json_encode($data2send));
+            */
         }
 
         private function ReceiveDataRTUUDP($rtudata)
