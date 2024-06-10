@@ -187,7 +187,7 @@ use DWIPS\libs\Module_GUID;
                 'FC' => hexdec(substr($buffer, 2, 2)), //Funktionscode - 1 Byte
                 'Data' => substr($buffer, 4, strlen($buffer) - 8) //Eigentliche Daten - Länge: -4 Byte
             ];
-            if ($this->CheckCRC(substr($buffer, 0, strlen($buffer) - 4), substr($buffer, strlen($buffer) - 4, 4))) {
+            if ($this->CheckCRC($buffer)) {
                 //Daten für ModbusDevice
                 $data2send = [
                     'DataID' => IO_Datatype::DWIPS_MODBUS_RX,
@@ -443,9 +443,14 @@ use DWIPS\libs\Module_GUID;
             return substr($crc, 2, 2) . substr($crc, 0, 2);
         }
 
-        private function CheckCRC(string $hexdata, string $crc): bool
+
+        /**
+         * @param string $hexdata Data in hex format including the CRC
+         * @return bool Returns whether the CRC of $hexdata is valid or not.
+         */
+        private function CheckCRC(string $hexdata): bool
         {
-            return $this->GenerateCRC($hexdata) == $crc;
+            return $this->GenerateCRC($hexdata) == 0;
         }
     }
 ?>
